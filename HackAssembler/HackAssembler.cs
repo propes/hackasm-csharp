@@ -83,7 +83,7 @@ namespace HackAssembler
             var memAddress = 16;
             foreach (var line in lines)
             {
-                if (line[0] == '@')
+                if (IsAddressLine(line))
                 {
                     var key = line.Substring(1, line.Length - 1);
                     if (!int.TryParse(key, out int result))
@@ -105,7 +105,7 @@ namespace HackAssembler
             for (int i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-                if (line[0] == '@')
+                if (IsAddressLine(line))
                 {
                     var key = line.Substring(1, line.Length - 1);
                     if (symbols.ContainsKey(key))
@@ -143,7 +143,7 @@ namespace HackAssembler
 
         private string TranslateAssemblyToMachineCode(string line)
         {
-            if (line[0] == '@')
+            if (IsAddressLine(line))
             {
                 return TranslateAddressInstruction(line);
             }
@@ -191,6 +191,11 @@ namespace HackAssembler
             }
 
             return command;
+        }
+        
+        private bool IsAddressLine(string line)
+        {
+            return line[0] == '@';
         }
     }
 }
