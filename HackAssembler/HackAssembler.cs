@@ -34,16 +34,20 @@ namespace HackAssembler
         };
 
         private readonly ICodeFinder codeFinder;
+        private readonly ITextCleaner textCleaner;
 
-        public HackAssembler(ICodeFinder codeFinder) {
+        public HackAssembler(
+                ICodeFinder codeFinder,
+                ITextCleaner textCleaner) {
             this.codeFinder = codeFinder;
+            this.textCleaner = textCleaner;
         }
 
         public void ProcessFile(string path)
         {
             var lines = File.ReadAllLines(path);
 
-            var cleanedLines = RemoveCommentsAndWhitespace(lines);
+            var cleanedLines = this.textCleaner.RemoveCommentsAndWhitespace(lines);
 
             GetLabels(cleanedLines, symbols);
 
@@ -56,28 +60,6 @@ namespace HackAssembler
             File.WriteAllLines(
                 Path.ChangeExtension(path, ".hack"),
                 machineLines);
-        }
-
-        public string[] RemoveCommentsAndWhitespace(string[] lines)
-        {
-            List<string> cleanedLines = new List<string>();
-
-            foreach (var line in lines)
-            {
-                var cleaned = line.Replace(" ", "");
-                var i = cleaned.IndexOf("//");
-                if (i >= 0)
-                {
-                    cleaned = cleaned.Substring(0, i);
-                }
-
-                if (cleaned != string.Empty)
-                {
-                    cleanedLines.Add(cleaned);
-                }
-            }
-
-            return cleanedLines.ToArray();
         }
 
         public void GetLabels(string[] lines, Dictionary<string, int> symbols)

@@ -10,7 +10,7 @@ namespace HackAssembler.Tests
 
         private HackAssembler CreateSut()
         {
-            return new HackAssembler(new CodeFinder());
+            return new HackAssembler(new CodeFinder(), new TextCleaner());
         }
 
         [Theory()]
@@ -35,24 +35,6 @@ namespace HackAssembler.Tests
             {
                 Assert.Equal(compareData[i], outputData[i]);
             }
-        }
-
-        [Fact]
-        public void RemoveCommentsAndWhitespace_WorksCorrectly() {
-            var lines = new string[]
-            {
-                " foo ",
-                "",
-                "// some comment",
-                "bar // another comment",
-                ""
-            };
-
-            var result = CreateSut().RemoveCommentsAndWhitespace(lines);
-
-            Assert.Equal(2, result.Length);
-            Assert.Equal("foo", result[0]);
-            Assert.Equal("bar", result[1]);
         }
 
         [Fact]
