@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace HackAssembler
 {
@@ -181,42 +180,14 @@ namespace HackAssembler
 
         private string TranslateCommandInstruction(string line)
         {
-            var commandLine = ParseCommandLine(line);
+            var command = ParseCommandLine(line);
 
-            return BuildBinaryString(commandLine);
+            return command.ToBinaryString();
         }
 
-        private string BuildBinaryString(CommandLine command)
+        private Command ParseCommandLine(string line)
         {
-            var builder = new StringBuilder();
-            builder.Append("111");
-
-            builder.Append(codeFinder.getCode("comp", command.Comp));
-
-            if (command.Dest != null)
-            {
-                builder.Append(codeFinder.getCode("dest", command.Dest));
-            }
-            else
-            {
-                builder.Append("000");
-            }
-
-            if (command.Jump != null)
-            {
-                builder.Append(codeFinder.getCode("jump", command.Jump));
-            }
-            else
-            {
-                builder.Append("000");
-            }
-
-            return builder.ToString();
-        }
-
-        private CommandLine ParseCommandLine(string line)
-        {
-            var command = new CommandLine();
+            var command = new Command(this.codeFinder);
             string remainder = null;
 
             var args = line.Split('=');
@@ -239,12 +210,5 @@ namespace HackAssembler
 
             return command;
         }
-    }
-
-    public class CommandLine
-    {
-        public string Dest { get; set;}
-        public string Comp { get; set;}
-        public string Jump { get; set;}
     }
 }
