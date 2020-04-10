@@ -35,12 +35,16 @@ namespace HackAssembler
 
         private readonly ICodeFinder codeFinder;
         private readonly ITextCleaner textCleaner;
+        private readonly ICommandParser commandParser;
 
         public HackAssembler(
                 ICodeFinder codeFinder,
-                ITextCleaner textCleaner) {
+                ITextCleaner textCleaner,
+                ICommandParser commandParser) {
+
             this.codeFinder = codeFinder;
             this.textCleaner = textCleaner;
+            this.commandParser = commandParser;
         }
 
         public void ProcessFile(string path)
@@ -162,35 +166,9 @@ namespace HackAssembler
 
         private string TranslateCommandInstruction(string line)
         {
-            var command = ParseCommandLine(line);
+            var command = this.commandParser.Parse(line);
 
             return command.ToBinaryString();
-        }
-
-        private Command ParseCommandLine(string line)
-        {
-            var command = new Command(this.codeFinder);
-            string remainder = null;
-
-            var args = line.Split('=');
-            if (args.Length > 1)
-            {
-                command.Dest = args[0];
-                remainder = args[1];
-            }
-            else
-            {
-                remainder = args[0];
-            }
-
-            var args2 = remainder.Split(';');
-            command.Comp = args2[0];
-            if (args2.Length > 1)
-            {
-                command.Jump = args2[1];
-            }
-
-            return command;
         }
         
         private bool IsAddressLine(string line)

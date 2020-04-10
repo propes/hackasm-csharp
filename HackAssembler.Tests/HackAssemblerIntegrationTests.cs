@@ -10,7 +10,12 @@ namespace HackAssembler.Tests
 
         private HackAssembler CreateSut()
         {
-            return new HackAssembler(new CodeFinder(), new TextCleaner());
+            var codeFinder = new CodeFinder();
+
+            return new HackAssembler(
+                codeFinder,
+                new TextCleaner(),
+                new CommandParser(codeFinder));
         }
 
         [Theory()]
