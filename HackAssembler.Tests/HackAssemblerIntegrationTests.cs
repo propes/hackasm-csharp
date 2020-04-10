@@ -8,6 +8,11 @@ namespace HackAssembler.Tests
     {
         private const string Directory = "TestFiles";
 
+        private HackAssembler CreateSut()
+        {
+            return new HackAssembler(new CodeFinder());
+        }
+
         [Theory()]
         [InlineData("Add.asm", "Add.hack", "Add.cmp")]
         [InlineData("Max.asm", "Max.hack", "Max.cmp")]
@@ -21,7 +26,7 @@ namespace HackAssembler.Tests
             outputFileName = Path.Join(Directory, outputFileName);
             compareFileName = Path.Join(Directory, compareFileName);
 
-            new HackAssembler().ProcessFile(testFileName);
+            CreateSut().ProcessFile(testFileName);
 
             var outputData = File.ReadAllLines(outputFileName);;
             var compareData = File.ReadAllLines(compareFileName);
@@ -43,7 +48,7 @@ namespace HackAssembler.Tests
                 ""
             };
 
-            var result = new HackAssembler().RemoveCommentsAndWhitespace(lines);
+            var result = CreateSut().RemoveCommentsAndWhitespace(lines);
 
             Assert.Equal(2, result.Length);
             Assert.Equal("foo", result[0]);
@@ -64,7 +69,7 @@ namespace HackAssembler.Tests
             };
             var symbols = new Dictionary<string, int>();
 
-            new HackAssembler().GetLabels(lines, symbols);
+            CreateSut().GetLabels(lines, symbols);
 
             Assert.Equal(1, symbols["foo"]);
             Assert.Equal(3, symbols["bar"]);
@@ -91,7 +96,7 @@ namespace HackAssembler.Tests
                 { "bar", 5 }
             };
 
-            new HackAssembler().GetVariables(lines, symbols);
+            CreateSut().GetVariables(lines, symbols);
 
             Assert.Equal(16, symbols["baz"]);
             Assert.Equal(17, symbols["bah"]);
@@ -120,7 +125,7 @@ namespace HackAssembler.Tests
                 { "bah", 17 }
             };
 
-            var linesNoSymbols = new HackAssembler().ReplaceSymbolsWithValues(lines, symbols);
+            var linesNoSymbols = CreateSut().ReplaceSymbolsWithValues(lines, symbols);
 
             Assert.Equal("@16", linesNoSymbols[0]);
             Assert.Equal("M=1", linesNoSymbols[1]);
